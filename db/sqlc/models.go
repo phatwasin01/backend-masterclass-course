@@ -12,7 +12,7 @@ import (
 type Event struct {
 	ID           int64          `json:"id"`
 	Name         string         `json:"name"`
-	OrganizerID  sql.NullInt64  `json:"organizer_id"`
+	OrganizerID  int64          `json:"organizer_id"`
 	Price        int32          `json:"price"`
 	Amount       int32          `json:"amount"`
 	AmountSold   int32          `json:"amount_sold"`
@@ -25,8 +25,8 @@ type Event struct {
 
 type Order struct {
 	ID        int64          `json:"id"`
-	UserID    sql.NullInt64  `json:"user_id"`
-	EventID   sql.NullInt64  `json:"event_id"`
+	UserID    int64          `json:"user_id"`
+	EventID   int64          `json:"event_id"`
 	Amount    int32          `json:"amount"`
 	SumPrice  int32          `json:"sum_price"`
 	Payment   sql.NullString `json:"payment"`
@@ -42,13 +42,13 @@ type Organizer struct {
 }
 
 type Ticket struct {
-	ID         int64         `json:"id"`
-	UserID     sql.NullInt64 `json:"user_id"`
-	EventID    sql.NullInt64 `json:"event_id"`
-	OrderID    sql.NullInt64 `json:"order_id"`
-	IsRedeemed sql.NullBool  `json:"is_redeemed"`
-	Hashed     string        `json:"hashed"`
-	CreatedAt  sql.NullTime  `json:"created_at"`
+	ID         int64          `json:"id"`
+	UserID     int64          `json:"user_id"`
+	EventID    int64          `json:"event_id"`
+	OrderID    int64          `json:"order_id"`
+	IsRedeemed sql.NullBool   `json:"is_redeemed"`
+	Hashed     sql.NullString `json:"hashed"`
+	CreatedAt  sql.NullTime   `json:"created_at"`
 }
 
 type User struct {

@@ -1,5 +1,5 @@
 CREATE TABLE "users" (
-  "id" bigserial PRIMARY KEY,
+  "id" bigserial PRIMARY KEY ,
   "user_id" varchar UNIQUE NOT NULL,
   "email" varchar UNIQUE NOT NULL,
   "display_name" varchar NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE "organizers" (
 CREATE TABLE "events" (
   "id" bigserial PRIMARY KEY,
   "name" varchar NOT NULL,
-  "organizer_id" bigint,
+  "organizer_id" bigint NOT NULL,
   "price" int NOT NULL,
   "amount" int NOT NULL,
   "amount_sold" int NOT NULL DEFAULT 0,
@@ -31,8 +31,8 @@ CREATE TABLE "events" (
 
 CREATE TABLE "orders" (
   "id" bigserial PRIMARY KEY,
-  "user_id" bigint,
-  "event_id" bigint,
+  "user_id" bigint NOT NULL,
+  "event_id" bigint NOT NULL,
   "amount" int NOT NULL,
   "sum_price" int NOT NULL,
   "payment" varchar,
@@ -41,11 +41,11 @@ CREATE TABLE "orders" (
 
 CREATE TABLE "tickets" (
   "id" bigserial PRIMARY KEY,
-  "user_id" bigint,
-  "event_id" bigint,
-  "order_id" bigint,
+  "user_id" bigint NOT NULL,
+  "event_id" bigint NOT NULL,
+  "order_id" bigint NOT NULL,
   "is_redeemed" boolean DEFAULT false,
-  "hashed" varchar NOT NULL,
+  "hashed" varchar,
   "created_at" timestamptz DEFAULT (now())
 );
 
