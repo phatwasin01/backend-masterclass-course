@@ -4,14 +4,15 @@ import (
 	"context"
 	"testing"
 
+	"github.com/phatwasin01/ticketx-line-oa/util"
 	"github.com/stretchr/testify/require"
 )
 
 func TestCreateUser(t *testing.T) {
 	arg := CreateUserParams{
-		UserID:      "U4af4980629",
-		Email:       "lineOA@email.com",
-		DisplayName: "LineOA",
+		UserID:      util.RandomUser(),
+		Email:       util.RandomEmail(),
+		DisplayName: util.RandomUser(),
 	}
 
 	user, err := testQueries.CreateUser(context.Background(), arg)

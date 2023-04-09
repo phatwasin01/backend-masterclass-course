@@ -5,14 +5,15 @@ import (
 	"database/sql"
 	"testing"
 
+	"github.com/phatwasin01/ticketx-line-oa/util"
 	"github.com/stretchr/testify/require"
 )
 
 func TestCreateOrganizer(t *testing.T) {
 	arg := CreateOrganizerParams{
-		Name:     "G2",
-		Email:    "g2@email.com",
-		Password: "secret",
+		Name:     util.RandomUser(),
+		Email:    util.RandomEmail(),
+		Password: util.RandomString(4),
 		Phone: sql.NullString{
 			String: "0877896541",
 			Valid:  true,
