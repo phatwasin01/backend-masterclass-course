@@ -39,7 +39,7 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.20.3
-    -name: Run Migration
+    - name: Run Migration
       run: make migrateup
     - name: Test
       run: make test
