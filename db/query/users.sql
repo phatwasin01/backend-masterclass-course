@@ -12,6 +12,10 @@ RETURNING *;
 SELECT * FROM users
 WHERE id = $1 LIMIT 1;
 
+-- name: GetUserLine :one
+SELECT * FROM users
+WHERE user_id = $1 LIMIT 1;
+
 -- name: ListUsers :many
 SELECT * FROM users
 ORDER BY id

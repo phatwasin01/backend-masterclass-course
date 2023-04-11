@@ -11,7 +11,7 @@ RETURNING *;
 
 -- name: GetOrganizer :one
 SELECT * FROM organizers
-WHERE id = $1 LIMIT 1;
+WHERE email = $1 LIMIT 1;
 
 -- name: ListOrganizers :many
 SELECT * FROM organizers

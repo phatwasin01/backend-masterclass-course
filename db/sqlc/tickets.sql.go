@@ -58,6 +58,47 @@ func (q *Queries) DeleteTicket(ctx context.Context, id int64) error {
 	return err
 }
 
+const getTicketOrder = `-- name: GetTicketOrder :many
+SELECT id, user_id, event_id, order_id, is_redeemed, hashed, created_at FROM tickets
+WHERE order_id = $1 AND user_id = $2
+`
+
+type GetTicketOrderParams struct {
+	OrderID int64 `json:"order_id"`
+	UserID  int64 `json:"user_id"`
+}
+
+func (q *Queries) GetTicketOrder(ctx context.Context, arg GetTicketOrderParams) ([]Ticket, error) {
+	rows, err := q.db.QueryContext(ctx, getTicketOrder, arg.OrderID, arg.UserID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Ticket{}
+	for rows.Next() {
+		var i Ticket
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.EventID,
+			&i.OrderID,
+			&i.IsRedeemed,
+			&i.Hashed,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTicketUser = `-- name: GetTicketUser :one
 SELECT id, user_id, event_id, order_id, is_redeemed, hashed, created_at FROM tickets
 WHERE user_id = $1

@@ -47,13 +47,13 @@ RETURNING *;
 
 -- name: UpdateEventSold :exec
 UPDATE events 
-SET amount_sold = $2
+SET amount_sold = amount_sold + $2
 WHERE id = $1
 RETURNING *;
 
 -- name: UpdateEventRedeem :exec
 UPDATE events 
-SET amount_redeem = $2
+SET amount_redeem = amount_redeem + $2
 WHERE id = $1
 RETURNING *;
 

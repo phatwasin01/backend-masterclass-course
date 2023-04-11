@@ -66,6 +66,24 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 	return i, err
 }
 
+const getUserLine = `-- name: GetUserLine :one
+SELECT id, user_id, email, display_name, created_at FROM users
+WHERE user_id = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserLine(ctx context.Context, userID string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserLine, userID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Email,
+		&i.DisplayName,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const listUsers = `-- name: ListUsers :many
 SELECT id, user_id, email, display_name, created_at FROM users
 ORDER BY id

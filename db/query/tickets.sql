@@ -13,6 +13,9 @@ RETURNING *;
 SELECT * FROM tickets
 WHERE user_id = $1;
 
+-- name: GetTicketOrder :many
+SELECT * FROM tickets
+WHERE order_id = $1 AND user_id = $2;
 
 
 -- name: RedeemTicket :exec

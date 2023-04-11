@@ -58,11 +58,11 @@ func (q *Queries) DeleteOrganizer(ctx context.Context, id int64) error {
 
 const getOrganizer = `-- name: GetOrganizer :one
 SELECT id, name, email, password, phone FROM organizers
-WHERE id = $1 LIMIT 1
+WHERE email = $1 LIMIT 1
 `
 
-func (q *Queries) GetOrganizer(ctx context.Context, id int64) (Organizer, error) {
-	row := q.db.QueryRowContext(ctx, getOrganizer, id)
+func (q *Queries) GetOrganizer(ctx context.Context, email string) (Organizer, error) {
+	row := q.db.QueryRowContext(ctx, getOrganizer, email)
 	var i Organizer
 	err := row.Scan(
 		&i.ID,

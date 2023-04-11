@@ -193,7 +193,7 @@ func (q *Queries) UpdateEventPrice(ctx context.Context, arg UpdateEventPricePara
 
 const updateEventRedeem = `-- name: UpdateEventRedeem :exec
 UPDATE events 
-SET amount_redeem = $2
+SET amount_redeem = amount_redeem + $2
 WHERE id = $1
 RETURNING id, name, organizer_id, price, amount, amount_sold, description, is_closed, amount_redeem, start_time, created_at
 `
@@ -210,7 +210,7 @@ func (q *Queries) UpdateEventRedeem(ctx context.Context, arg UpdateEventRedeemPa
 
 const updateEventSold = `-- name: UpdateEventSold :exec
 UPDATE events 
-SET amount_sold = $2
+SET amount_sold = amount_sold + $2
 WHERE id = $1
 RETURNING id, name, organizer_id, price, amount, amount_sold, description, is_closed, amount_redeem, start_time, created_at
 `

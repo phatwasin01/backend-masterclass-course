@@ -36,12 +36,6 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 
 }
 
-// type CreateTicketsParams struct {
-// 	UserID  int64 `json:"user_id"`
-// 	EventID int64 `json:"event_id"`
-// 	OrderID int64 `json:"order_id"`
-// }
-
 func (store *Store) CreateOrderTickets(ctx context.Context, arg CreateOrderParams) ([]Ticket, error) {
 	var ticketlist []Ticket
 	err := store.execTx(ctx, func(q *Queries) error {
@@ -64,6 +58,13 @@ func (store *Store) CreateOrderTickets(ctx context.Context, arg CreateOrderParam
 			return errors.New("Ticket List != Order Amount")
 		}
 
+		err = q.UpdateEventSold(ctx, UpdateEventSoldParams{
+			ID:         order.EventID,
+			AmountSold: order.Amount,
+		})
+		if err != nil {
+			return err
+		}
 		return nil
 	})
 	return ticketlist, err
