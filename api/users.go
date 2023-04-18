@@ -45,6 +45,10 @@ func (server *Server) createUser(ctx *gin.Context) {
 		Email:       authPayload.Email,
 		DisplayName: authPayload.Name,
 	}
+	if authPayload.Sub == "" {
+		ctx.JSON(http.StatusInternalServerError, "Empty UserID")
+		return
+	}
 	fmt.Println("authPayload ID:", authPayload.Sub)
 	user, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
