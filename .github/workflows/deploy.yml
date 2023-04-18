@@ -6,8 +6,12 @@ name: Deploy to production
 on:
   push:
     branches: [ "main" ]
+  
 
 jobs:
+  permissions:
+    id-token: write
+    contents: read # This is required for actions/checkout@v2
 
   build:
     name: Build Image
@@ -21,7 +25,7 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2 # More information on this action can be found below in the 'AWS Credentials' section
       with:
-        role-to-assume: arn:aws:iam::018895498867:user/github-ci
+        role-to-assume: arn:aws:iam::018895498867:role/github-ci
         aws-region: southeast-1
 
     - name: Login to Amazon ECR
