@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"testing"
 	"time"
 
@@ -24,7 +25,7 @@ func TestCreateOrder(t *testing.T) {
 	require.Equal(t, arg.Email, user.Email)
 	require.Equal(t, arg.DisplayName, user.DisplayName)
 
-	require.NotZero(t, user.ID)
+	require.NotZero(t, user.UserID)
 	require.NotZero(t, user.CreatedAt)
 	//Create Organizer
 	arg1 := CreateOrganizerParams{
@@ -43,7 +44,7 @@ func TestCreateOrder(t *testing.T) {
 	//Create Event
 	arg2 := CreateEventParams{
 		Name:        util.RandomUser(),
-		OrganizerID: user.ID,
+		OrganizerID: orgainzer.ID,
 		Price:       int32(util.RandomInt(10, 1000)),
 		Amount:      int32(util.RandomInt(10, 1000)),
 		StartTime:   time.Date(2023, time.April, 16, 0, 0, 0, 0, time.UTC),
@@ -55,11 +56,12 @@ func TestCreateOrder(t *testing.T) {
 	//Create Tickets
 	amount := int32(util.RandomInt(1, 20))
 	result, err := store.CreateOrderTickets(context.Background(), CreateOrderParams{
-		UserID:   user.ID,
+		UserID:   user.UserID,
 		EventID:  event.ID,
 		Amount:   amount,
 		SumPrice: amount * event.Price,
 	})
+	fmt.Print(result)
 	require.NoError(t, err)
 	require.NotEmpty(t, result)
 }

@@ -22,6 +22,6 @@ func TestCreateUser(t *testing.T) {
 	require.Equal(t, arg.Email, user.Email)
 	require.Equal(t, arg.DisplayName, user.DisplayName)
 
-	require.NotZero(t, user.ID)
+	require.NotZero(t, user.UserID)
 	require.NotZero(t, user.CreatedAt)
 }

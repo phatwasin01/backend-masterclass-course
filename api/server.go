@@ -27,17 +27,17 @@ func NewServer(config util.Config, store *db.Store) (*Server, error) {
 		tokenMaker: tokenMaker,
 	}
 	router := gin.Default()
-	authRoutes := router.Group("/").Use(lineAuthMiddleware(config))
+	authRoutesLine := router.Group("/").Use(lineAuthMiddleware(config))
 	authRoutesOrganizer := router.Group("/").Use(authMiddleware(server.tokenMaker))
 	authRoutesOrganizer.POST("/event", server.createEvent)
-	authRoutes.POST("/user", server.userFromIdToken)
+	authRoutesLine.POST("/user", server.createUser)
 	router.POST("/organizer", server.createOrganizer)
 	router.POST("/login", server.loginOrganizer)
 	router.GET("/event", server.listEvents)
 	router.GET("/event/:id", server.getEvent)
-	authRoutes.POST("/order", server.createOrder)
-	authRoutes.GET("/order", server.getOrders)
-	authRoutes.GET("/ticket/:order_id", server.getTicketOrder)
+	authRoutesLine.POST("/order", server.createOrder)
+	authRoutesLine.GET("/order", server.getOrders)
+	authRoutesLine.GET("/ticket/:order_id", server.getTicketOrder)
 	server.router = router
 	return server, nil
 }

@@ -20,17 +20,17 @@ type Event struct {
 	IsClosed     bool           `json:"is_closed"`
 	AmountRedeem int32          `json:"amount_redeem"`
 	StartTime    time.Time      `json:"start_time"`
-	CreatedAt    sql.NullTime   `json:"created_at"`
+	CreatedAt    time.Time      `json:"created_at"`
 }
 
 type Order struct {
 	ID        int64          `json:"id"`
-	UserID    int64          `json:"user_id"`
+	UserID    string         `json:"user_id"`
 	EventID   int64          `json:"event_id"`
 	Amount    int32          `json:"amount"`
 	SumPrice  int32          `json:"sum_price"`
 	Payment   sql.NullString `json:"payment"`
-	CreatedAt sql.NullTime   `json:"created_at"`
+	CreatedAt time.Time      `json:"created_at"`
 }
 
 type Organizer struct {
@@ -42,19 +42,18 @@ type Organizer struct {
 }
 
 type Ticket struct {
-	ID         int64          `json:"id"`
-	UserID     int64          `json:"user_id"`
-	EventID    int64          `json:"event_id"`
-	OrderID    int64          `json:"order_id"`
-	IsRedeemed sql.NullBool   `json:"is_redeemed"`
-	Hashed     sql.NullString `json:"hashed"`
-	CreatedAt  sql.NullTime   `json:"created_at"`
+	ID         int64     `json:"id"`
+	UserID     string    `json:"user_id"`
+	EventID    int64     `json:"event_id"`
+	OrderID    int64     `json:"order_id"`
+	IsRedeemed bool      `json:"is_redeemed"`
+	TicketUuid string    `json:"ticket_uuid"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 type User struct {
-	ID          int64        `json:"id"`
-	UserID      string       `json:"user_id"`
-	Email       string       `json:"email"`
-	DisplayName string       `json:"display_name"`
-	CreatedAt   sql.NullTime `json:"created_at"`
+	UserID      string    `json:"user_id"`
+	Email       string    `json:"email"`
+	DisplayName string    `json:"display_name"`
+	CreatedAt   time.Time `json:"created_at"`
 }

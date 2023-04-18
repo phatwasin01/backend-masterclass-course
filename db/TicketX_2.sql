@@ -16,7 +16,7 @@ CREATE TABLE "organizers" (
 CREATE TABLE "events" (
   "id" bigserial PRIMARY KEY,
   "name" varchar NOT NULL,
-  "organizer_id" bigint NOT NULL,
+  "organizer_id" varchar NOT NULL,
   "price" int NOT NULL,
   "amount" int NOT NULL,
   "amount_sold" int NOT NULL DEFAULT 0,

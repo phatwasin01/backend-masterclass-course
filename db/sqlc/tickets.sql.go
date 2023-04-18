@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createTicket = `-- name: CreateTicket :one
@@ -15,18 +14,18 @@ INSERT INTO tickets (
   user_id,
   event_id,
   order_id,
-  hashed
+  ticket_uuid
 ) VALUES (
   $1, $2, $3, $4
 )
-RETURNING id, user_id, event_id, order_id, is_redeemed, hashed, created_at
+RETURNING id, user_id, event_id, order_id, is_redeemed, ticket_uuid, created_at
 `
 
 type CreateTicketParams struct {
-	UserID  int64          `json:"user_id"`
-	EventID int64          `json:"event_id"`
-	OrderID int64          `json:"order_id"`
-	Hashed  sql.NullString `json:"hashed"`
+	UserID     string `json:"user_id"`
+	EventID    int64  `json:"event_id"`
+	OrderID    int64  `json:"order_id"`
+	TicketUuid string `json:"ticket_uuid"`
 }
 
 func (q *Queries) CreateTicket(ctx context.Context, arg CreateTicketParams) (Ticket, error) {
@@ -34,7 +33,7 @@ func (q *Queries) CreateTicket(ctx context.Context, arg CreateTicketParams) (Tic
 		arg.UserID,
 		arg.EventID,
 		arg.OrderID,
-		arg.Hashed,
+		arg.TicketUuid,
 	)
 	var i Ticket
 	err := row.Scan(
@@ -43,7 +42,7 @@ func (q *Queries) CreateTicket(ctx context.Context, arg CreateTicketParams) (Tic
 		&i.EventID,
 		&i.OrderID,
 		&i.IsRedeemed,
-		&i.Hashed,
+		&i.TicketUuid,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -59,13 +58,13 @@ func (q *Queries) DeleteTicket(ctx context.Context, id int64) error {
 }
 
 const getTicketOrder = `-- name: GetTicketOrder :many
-SELECT id, user_id, event_id, order_id, is_redeemed, hashed, created_at FROM tickets
+SELECT id, user_id, event_id, order_id, is_redeemed, ticket_uuid, created_at FROM tickets
 WHERE order_id = $1 AND user_id = $2
 `
 
 type GetTicketOrderParams struct {
-	OrderID int64 `json:"order_id"`
-	UserID  int64 `json:"user_id"`
+	OrderID int64  `json:"order_id"`
+	UserID  string `json:"user_id"`
 }
 
 func (q *Queries) GetTicketOrder(ctx context.Context, arg GetTicketOrderParams) ([]Ticket, error) {
@@ -83,7 +82,7 @@ func (q *Queries) GetTicketOrder(ctx context.Context, arg GetTicketOrderParams) 
 			&i.EventID,
 			&i.OrderID,
 			&i.IsRedeemed,
-			&i.Hashed,
+			&i.TicketUuid,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -100,11 +99,11 @@ func (q *Queries) GetTicketOrder(ctx context.Context, arg GetTicketOrderParams) 
 }
 
 const getTicketUser = `-- name: GetTicketUser :one
-SELECT id, user_id, event_id, order_id, is_redeemed, hashed, created_at FROM tickets
+SELECT id, user_id, event_id, order_id, is_redeemed, ticket_uuid, created_at FROM tickets
 WHERE user_id = $1
 `
 
-func (q *Queries) GetTicketUser(ctx context.Context, userID int64) (Ticket, error) {
+func (q *Queries) GetTicketUser(ctx context.Context, userID string) (Ticket, error) {
 	row := q.db.QueryRowContext(ctx, getTicketUser, userID)
 	var i Ticket
 	err := row.Scan(
@@ -113,37 +112,21 @@ func (q *Queries) GetTicketUser(ctx context.Context, userID int64) (Ticket, erro
 		&i.EventID,
 		&i.OrderID,
 		&i.IsRedeemed,
-		&i.Hashed,
+		&i.TicketUuid,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const hashTicket = `-- name: HashTicket :exec
-UPDATE Tickets SET hashed = $2
-WHERE id = $1
-RETURNING id, user_id, event_id, order_id, is_redeemed, hashed, created_at
-`
-
-type HashTicketParams struct {
-	ID     int64          `json:"id"`
-	Hashed sql.NullString `json:"hashed"`
-}
-
-func (q *Queries) HashTicket(ctx context.Context, arg HashTicketParams) error {
-	_, err := q.db.ExecContext(ctx, hashTicket, arg.ID, arg.Hashed)
-	return err
-}
-
 const redeemTicket = `-- name: RedeemTicket :exec
-UPDATE Tickets SET is_redeemed = $2
+UPDATE tickets SET is_redeemed = $2
 WHERE id = $1
-RETURNING id, user_id, event_id, order_id, is_redeemed, hashed, created_at
+RETURNING (user_id,event_id,order_id,ticket_uuid)
 `
 
 type RedeemTicketParams struct {
-	ID         int64        `json:"id"`
-	IsRedeemed sql.NullBool `json:"is_redeemed"`
+	ID         int64 `json:"id"`
+	IsRedeemed bool  `json:"is_redeemed"`
 }
 
 func (q *Queries) RedeemTicket(ctx context.Context, arg RedeemTicketParams) error {

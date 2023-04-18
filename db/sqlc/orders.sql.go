@@ -24,7 +24,7 @@ RETURNING id, user_id, event_id, amount, sum_price, payment, created_at
 `
 
 type CreateOrderParams struct {
-	UserID   int64          `json:"user_id"`
+	UserID   string         `json:"user_id"`
 	EventID  int64          `json:"event_id"`
 	Amount   int32          `json:"amount"`
 	SumPrice int32          `json:"sum_price"`
@@ -122,7 +122,7 @@ SELECT id, user_id, event_id, amount, sum_price, payment, created_at FROM orders
 WHERE user_id = $1
 `
 
-func (q *Queries) ListOrdersUser(ctx context.Context, userID int64) ([]Order, error) {
+func (q *Queries) ListOrdersUser(ctx context.Context, userID string) ([]Order, error) {
 	rows, err := q.db.QueryContext(ctx, listOrdersUser, userID)
 	if err != nil {
 		return nil, err

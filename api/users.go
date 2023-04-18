@@ -36,7 +36,7 @@ import (
 
 // }
 
-func (server *Server) userFromIdToken(ctx *gin.Context) {
+func (server *Server) createUser(ctx *gin.Context) {
 
 	authPayload := ctx.MustGet("user_info").(*LineAuthResponse)
 	arg := db.CreateUserParams{

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,15 +21,6 @@ func (server *Server) createOrder(ctx *gin.Context) {
 		return
 	}
 	authPayload := ctx.MustGet("user_info").(*LineAuthResponse)
-	line, err := server.store.GetUserLine(ctx, authPayload.Sub)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
 
 	event, err := server.store.GetEvent(ctx, req.EventID)
 	if err != nil {
@@ -38,7 +28,7 @@ func (server *Server) createOrder(ctx *gin.Context) {
 		return
 	}
 	arg := db.CreateOrderParams{
-		UserID:   line.ID,
+		UserID:   authPayload.Sub,
 		EventID:  req.EventID,
 		Amount:   req.Amount,
 		SumPrice: event.Price * req.Amount,
@@ -56,12 +46,8 @@ func (server *Server) createOrder(ctx *gin.Context) {
 
 func (server *Server) getOrders(ctx *gin.Context) {
 	authPayload := ctx.MustGet("user_info").(*LineAuthResponse)
-	line, err := server.store.GetUserLine(ctx, authPayload.Sub)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-	event, err := server.store.ListOrdersUser(ctx, line.ID)
+
+	event, err := server.store.ListOrdersUser(ctx, authPayload.Sub)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return

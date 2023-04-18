@@ -10,7 +10,7 @@ RETURNING *;
 
 -- name: GetUser :one
 SELECT * FROM users
-WHERE id = $1 LIMIT 1;
+WHERE user_id = $1 LIMIT 1;
 
 -- name: GetUserLine :one
 SELECT * FROM users
@@ -24,8 +24,8 @@ OFFSET $2;
 
 -- name: UpdateUser :exec
 UPDATE users SET display_name = $2
-WHERE id = $1
+WHERE user_id = $1
 RETURNING *;
 
 -- name: DeleteUser :exec
-DELETE FROM users WHERE id = $1;
+DELETE FROM users WHERE user_id = $1;

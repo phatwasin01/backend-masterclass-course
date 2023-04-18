@@ -1,7 +1,6 @@
 package api
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,18 +18,10 @@ func (server *Server) getTicketOrder(ctx *gin.Context) {
 		return
 	}
 	authPayload := ctx.MustGet("user_info").(*LineAuthResponse)
-	user, err := server.store.GetUserLine(ctx, authPayload.Sub)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
+
 	arg := db.GetTicketOrderParams{
 		OrderID: req.OrderID,
-		UserID:  user.ID,
+		UserID:  authPayload.Sub,
 	}
 	tickets, err := server.store.GetTicketOrder(ctx, arg)
 	if err != nil {

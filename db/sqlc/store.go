@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
+	"github.com/google/uuid"
 )
 
 type Store struct {
@@ -36,6 +38,13 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 
 }
 
+type HashingTicketsResponse struct {
+	UserID  int64  `json:"user_id"`
+	EventID int64  `json:"event_id"`
+	OrderID int64  `json:"order_id"`
+	Hashed  string `json:"hashed"`
+}
+
 func (store *Store) CreateOrderTickets(ctx context.Context, arg CreateOrderParams) ([]Ticket, error) {
 	var ticketlist []Ticket
 	err := store.execTx(ctx, func(q *Queries) error {
@@ -45,9 +54,10 @@ func (store *Store) CreateOrderTickets(ctx context.Context, arg CreateOrderParam
 		}
 		for i := 0; i < int(order.Amount); i++ {
 			ticket, err := q.CreateTicket(ctx, CreateTicketParams{
-				UserID:  order.UserID,
-				EventID: order.EventID,
-				OrderID: order.ID,
+				UserID:     order.UserID,
+				EventID:    order.EventID,
+				OrderID:    order.ID,
+				TicketUuid: uuid.New().String(),
 			})
 			ticketlist = append(ticketlist, ticket)
 			if err != nil {
@@ -57,7 +67,6 @@ func (store *Store) CreateOrderTickets(ctx context.Context, arg CreateOrderParam
 		if len(ticketlist) != int(order.Amount) {
 			return errors.New("Ticket List != Order Amount")
 		}
-
 		err = q.UpdateEventSold(ctx, UpdateEventSoldParams{
 			ID:         order.EventID,
 			AmountSold: order.Amount,

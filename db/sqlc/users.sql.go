@@ -17,7 +17,7 @@ INSERT INTO users (
 ) VALUES (
   $1, $2, $3
 )
-RETURNING id, user_id, email, display_name, created_at
+RETURNING user_id, email, display_name, created_at
 `
 
 type CreateUserParams struct {
@@ -30,7 +30,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	row := q.db.QueryRowContext(ctx, createUser, arg.UserID, arg.Email, arg.DisplayName)
 	var i User
 	err := row.Scan(
-		&i.ID,
 		&i.UserID,
 		&i.Email,
 		&i.DisplayName,
@@ -40,24 +39,23 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const deleteUser = `-- name: DeleteUser :exec
-DELETE FROM users WHERE id = $1
+DELETE FROM users WHERE user_id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteUser, id)
+func (q *Queries) DeleteUser(ctx context.Context, userID string) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, userID)
 	return err
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, user_id, email, display_name, created_at FROM users
-WHERE id = $1 LIMIT 1
+SELECT user_id, email, display_name, created_at FROM users
+WHERE user_id = $1 LIMIT 1
 `
 
-func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, id)
+func (q *Queries) GetUser(ctx context.Context, userID string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUser, userID)
 	var i User
 	err := row.Scan(
-		&i.ID,
 		&i.UserID,
 		&i.Email,
 		&i.DisplayName,
@@ -67,7 +65,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 }
 
 const getUserLine = `-- name: GetUserLine :one
-SELECT id, user_id, email, display_name, created_at FROM users
+SELECT user_id, email, display_name, created_at FROM users
 WHERE user_id = $1 LIMIT 1
 `
 
@@ -75,7 +73,6 @@ func (q *Queries) GetUserLine(ctx context.Context, userID string) (User, error) 
 	row := q.db.QueryRowContext(ctx, getUserLine, userID)
 	var i User
 	err := row.Scan(
-		&i.ID,
 		&i.UserID,
 		&i.Email,
 		&i.DisplayName,
@@ -85,7 +82,7 @@ func (q *Queries) GetUserLine(ctx context.Context, userID string) (User, error) 
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, user_id, email, display_name, created_at FROM users
+SELECT user_id, email, display_name, created_at FROM users
 ORDER BY id
 LIMIT $1 
 OFFSET $2
@@ -106,7 +103,6 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 	for rows.Next() {
 		var i User
 		if err := rows.Scan(
-			&i.ID,
 			&i.UserID,
 			&i.Email,
 			&i.DisplayName,
@@ -127,16 +123,16 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 
 const updateUser = `-- name: UpdateUser :exec
 UPDATE users SET display_name = $2
-WHERE id = $1
-RETURNING id, user_id, email, display_name, created_at
+WHERE user_id = $1
+RETURNING user_id, email, display_name, created_at
 `
 
 type UpdateUserParams struct {
-	ID          int64  `json:"id"`
+	UserID      string `json:"user_id"`
 	DisplayName string `json:"display_name"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.ExecContext(ctx, updateUser, arg.ID, arg.DisplayName)
+	_, err := q.db.ExecContext(ctx, updateUser, arg.UserID, arg.DisplayName)
 	return err
 }

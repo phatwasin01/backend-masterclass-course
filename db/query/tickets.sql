@@ -3,7 +3,7 @@ INSERT INTO tickets (
   user_id,
   event_id,
   order_id,
-  hashed
+  ticket_uuid
 ) VALUES (
   $1, $2, $3, $4
 )
@@ -19,14 +19,10 @@ WHERE order_id = $1 AND user_id = $2;
 
 
 -- name: RedeemTicket :exec
-UPDATE Tickets SET is_redeemed = $2
+UPDATE tickets SET is_redeemed = $2
 WHERE id = $1
-RETURNING *;
+RETURNING (user_id,event_id,order_id,ticket_uuid);
 
--- name: HashTicket :exec
-UPDATE Tickets SET hashed = $2
-WHERE id = $1
-RETURNING *;
 
 
 -- name: DeleteTicket :exec
