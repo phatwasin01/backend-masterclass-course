@@ -1,6 +1,6 @@
 CREATE TABLE "users" (
   "user_id" varchar PRIMARY KEY,
-  "email" varchar UNIQUE NOT NULL,
+  "email" varchar NOT NULL,
   "display_name" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );

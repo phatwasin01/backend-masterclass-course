@@ -14,6 +14,7 @@ import (
 	"github.com/phatwasin01/ticketx-line-oa/util"
 )
 
+// Sub = UserID
 type LineAuthResponse struct {
 	Iss     string   `json:"iss"`
 	Sub     string   `json:"sub"`
@@ -29,15 +30,15 @@ type LineAuthResponse struct {
 
 func lineAuthMiddleware(config util.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get the ID token from the request header
+		// Get the ID token from the request header -> liff.getIDToken()
 		idToken := c.GetHeader("id_token")
 		if idToken == "" {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "ID token not found in request header"})
 			return
 		}
 
-		// Get the Channel ID from the request header
-		clientID := config.ClientId
+		// Get the Channel ID from the request header -> liff.getDecodedIDToken() to get Aud ?
+		clientID := c.GetHeader("client_id")
 		if clientID == "" {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Channel ID not found in request header"})
 			return
@@ -72,6 +73,7 @@ func lineAuthMiddleware(config util.Config) gin.HandlerFunc {
 
 		// Read the response body
 		responseBody, err := io.ReadAll(resp.Body)
+		// fmt.Println("Response: ", responseBody)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -82,7 +84,7 @@ func lineAuthMiddleware(config util.Config) gin.HandlerFunc {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-
+		// fmt.Println("User: ", user)
 		// Set the response body and content type
 		c.Set("user_info", user)
 		c.Next()

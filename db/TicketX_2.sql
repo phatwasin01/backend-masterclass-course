@@ -1,6 +1,6 @@
 CREATE TABLE "users" (
   "user_id" varchar PRIMARY KEY,
-  "email" varchar UNIQUE NOT NULL,
+  "email" varchar NOT NULL,
   "display_name" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -16,7 +16,7 @@ CREATE TABLE "organizers" (
 CREATE TABLE "events" (
   "id" bigserial PRIMARY KEY,
   "name" varchar NOT NULL,
-  "organizer_id" varchar NOT NULL,
+  "organizer_id" bigint NOT NULL,
   "price" int NOT NULL,
   "amount" int NOT NULL,
   "amount_sold" int NOT NULL DEFAULT 0,

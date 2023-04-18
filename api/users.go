@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -38,13 +39,14 @@ import (
 
 func (server *Server) createUser(ctx *gin.Context) {
 
-	authPayload := ctx.MustGet("user_info").(*LineAuthResponse)
+	authPayload := ctx.MustGet("user_info").(LineAuthResponse)
 	arg := db.CreateUserParams{
 		UserID:      authPayload.Sub,
 		Email:       authPayload.Email,
 		DisplayName: authPayload.Name,
 	}
-	_, err := server.store.CreateUser(ctx, arg)
+	fmt.Println("authPayload ID:", authPayload.Sub)
+	user, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {
@@ -57,6 +59,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-	ctx.JSON(http.StatusOK, authPayload)
+	fmt.Println("Response:", user)
+	ctx.JSON(http.StatusOK, user)
 
 }

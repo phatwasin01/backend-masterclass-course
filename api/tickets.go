@@ -17,7 +17,7 @@ func (server *Server) getTicketOrder(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	authPayload := ctx.MustGet("user_info").(*LineAuthResponse)
+	authPayload := ctx.MustGet("user_info").(LineAuthResponse)
 
 	arg := db.GetTicketOrderParams{
 		OrderID: req.OrderID,

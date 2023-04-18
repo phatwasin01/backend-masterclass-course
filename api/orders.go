@@ -8,7 +8,6 @@ import (
 )
 
 type createOrderRequest struct {
-	UserID  int64 `json:"user_id" binding:"required"`
 	EventID int64 `json:"event_id" binding:"required"`
 	Amount  int32 `json:"amount" binding:"required,min=1"`
 	// Payment  sql.NullString `json:"payment" binding:"required"`
@@ -20,7 +19,7 @@ func (server *Server) createOrder(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	authPayload := ctx.MustGet("user_info").(*LineAuthResponse)
+	authPayload := ctx.MustGet("user_info").(LineAuthResponse)
 
 	event, err := server.store.GetEvent(ctx, req.EventID)
 	if err != nil {
@@ -45,7 +44,7 @@ func (server *Server) createOrder(ctx *gin.Context) {
 }
 
 func (server *Server) getOrders(ctx *gin.Context) {
-	authPayload := ctx.MustGet("user_info").(*LineAuthResponse)
+	authPayload := ctx.MustGet("user_info").(LineAuthResponse)
 
 	event, err := server.store.ListOrdersUser(ctx, authPayload.Sub)
 	if err != nil {
