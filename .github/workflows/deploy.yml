@@ -6,10 +6,9 @@ name: Deploy to production
 on:
   push:
     branches: [ "main" ]
-
-  permissions:
-    id-token: write
-    contents: read # This is required for actions/checkout@v2
+    permissions:
+      id-token: write
+      contents: read # This is required for actions/checkout@v2
   
 
 jobs:
