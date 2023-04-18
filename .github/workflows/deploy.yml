@@ -6,12 +6,13 @@ name: Deploy to production
 on:
   push:
     branches: [ "main" ]
-  
 
-jobs:
   permissions:
     id-token: write
     contents: read # This is required for actions/checkout@v2
+  
+
+jobs:
 
   build:
     name: Build Image
