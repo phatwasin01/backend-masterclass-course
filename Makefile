@@ -16,4 +16,6 @@ test:
 	go test -v -cover ./...
 server:
 	go run main.go
-.PHONY: createdb, dropdb, postgres,migrateup,migratedown,sqlc,test,server
+aws:
+	aws secretsmanager get-secret-value --secret-id ticketx --query SecretString --output text | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > app.env
+.PHONY: createdb, dropdb, postgres,migrateup,migratedown,sqlc,test,server,aws
