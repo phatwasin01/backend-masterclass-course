@@ -24,6 +24,7 @@ func TestMain(m *testing.M) {
 		// log.Println(err)
 		log.Fatal("cannot connect to db:", err)
 	}
+	//
 	// require.NoError(m, err)
 	testQueries = New(testDB)
 	os.Exit(m.Run())
