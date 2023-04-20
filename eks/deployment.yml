@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+
+kind: Deployment
+metadata:
+  name: ticketx-api-deploy
+  labels:
+    app: ticketx-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketx-api
+  template:
+    metadata:
+      labels:
+        app: ticketx-api
+    spec:
+      containers:
+      - name: ticketx-api
+        image: 018895498867.dkr.ecr.ap-southeast-1.amazonaws.com/ticketx:23ba015536f97c4259680dbc5cd30e51ccb5d344
+        ports:
+        - containerPort: 8080
