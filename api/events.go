@@ -52,30 +52,13 @@ func (server *Server) createEvent(ctx *gin.Context) {
 
 }
 
-type listEventsRequest struct {
-	PageID   int32 `form:"page_id" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
-}
-
 func (server *Server) listEvents(ctx *gin.Context) {
-	var req listEventsRequest
-	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return
-	}
-
-	arg := db.ListEventsParams{
-		Limit:  req.PageID,
-		Offset: (req.PageID - 1) * req.PageSize,
-	}
-
-	event, err := server.store.ListEvents(ctx, arg)
+	event, err := server.store.ListEventsOpen(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, event)
-
 }
 
 type getEventRequest struct {

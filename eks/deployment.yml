@@ -6,7 +6,7 @@ metadata:
   labels:
     app: ticketx-api
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: ticketx-api
@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: ticketx-api
-        image: 018895498867.dkr.ecr.ap-southeast-1.amazonaws.com/ticketx:23ba015536f97c4259680dbc5cd30e51ccb5d344
+        image: 018895498867.dkr.ecr.ap-southeast-1.amazonaws.com/ticketx:d4bfb70f78675669381daeb6f780e21ad7391c56
         ports:
         - containerPort: 8080

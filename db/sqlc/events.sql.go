@@ -140,6 +140,47 @@ func (q *Queries) ListEvents(ctx context.Context, arg ListEventsParams) ([]Event
 	return items, nil
 }
 
+const listEventsOpen = `-- name: ListEventsOpen :many
+SELECT id, name, organizer_id, price, amount, amount_sold, description, is_closed, amount_redeem, start_time, created_at FROM events
+WHERE is_closed = false
+ORDER BY start_time
+`
+
+func (q *Queries) ListEventsOpen(ctx context.Context) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, listEventsOpen)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Event{}
+	for rows.Next() {
+		var i Event
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.OrganizerID,
+			&i.Price,
+			&i.Amount,
+			&i.AmountSold,
+			&i.Description,
+			&i.IsClosed,
+			&i.AmountRedeem,
+			&i.StartTime,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateEventAmount = `-- name: UpdateEventAmount :exec
 UPDATE events 
 SET amount = $2
